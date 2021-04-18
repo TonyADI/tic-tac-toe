@@ -58,49 +58,54 @@ const App = () => {
     }
 
     const calculateWinner = positions => {
-      const lines = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
-        [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
-      ];
-      for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (positions[a] && positions[a] === positions[b] && positions[a] === positions[c]) {
-          if(positions[a] === 'X'){
-            const ans = window.confirm('You won! Keep playing?');
-            if(ans){
-              setPositions([]);
-              setMoves(0);
+      if(moves > 3){
+        const lines = [
+          [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+          [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
+        ];
+        for (let i = 0; i < lines.length; i++) {
+          const [a, b, c] = lines[i];
+          if (positions[a] && positions[a] === positions[b] && positions[a] === positions[c]) {
+            if(positions[a] === 'X'){
+              const ans = window.confirm('You won! Keep playing?');
+              if(ans){
+                setPositions([]);
+                setMoves(0);
+              }
+              else{
+                //menu
+              }
+              setPlayerScore(playerScore + 1);
             }
             else{
-              //menu
+              const ans = window.confirm('Better luck next time! Try again?');
+              if(ans){
+                setPositions([]);
+                setMoves(0);
+                setTurn('Your');
+              }
+              else{
+                //menu
+              }
+              setComputerScore(computerScore + 1);
             }
-            setPlayerScore(playerScore + 1);
+            return true;
+          }
+        }
+        if(moves === 9){
+          const ans = window.confirm('Game Over! No winner. Try Again?');
+          if(ans){
+            setPositions([]);
+            setMoves(0);
+            setTurn('Your');
           }
           else{
-            const ans = window.confirm('Better luck next time! Try again?');
-            if(ans){
-              setPositions([]);
-              setMoves(0);
-              setTurn('Your');
-            }
-            else{
-              //menu
-            }
-            setComputerScore(computerScore + 1);
+            // menu
           }
-          return true;
         }
+        return false;
       }
-      return false;
     }
-
-    useEffect(() => {
-      // End game when all moves have been made.
-      if(moves === 9){
-        alert('Game Over! No winner.');
-        reset();
-      }
-    }, [moves]);
 
     useEffect(() => {
       if(turn === 'Computers'){
