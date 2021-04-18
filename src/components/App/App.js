@@ -1,34 +1,127 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import { Board } from '../Board/Board';
 
-class App extends React.Component{
-    constructor(props){
-      super(props);
-      const randomMove = ['X', 'O'][Math.floor(Math.random()*2)]
-      this.state = {currentMove: randomMove, moveList: []}
-      this.handleClick = this.handleClick.bind(this);
+const App = () => {
+    const randomMove = ['X', 'O'][Math.floor(Math.random()*2)]
+    const [currentMove, setCurrentMove] = useState(randomMove);
+    const [positions, setPositions] = useState([]);
+    const [moves, setMoves] = useState(0);
+    const [won, setWon] = useState(false);
+    const [turn, setTurn] = useState('Your');
+    const [playerScore, setPlayerScore] = useState(0);
+    const [computerScore, setComputerScore] = useState(0);
+
+    const handleClick = (turn, position) => {
+      positions[position] = 'X';
+      setPositions([...positions]);
+      setMoves(moves + 1);
+      setTimeout(() => {
+        const winner = calculateWinner([...positions]);
+        if(!winner){
+          setTurn('Computers');
+        }
+      }, 0);
     }
 
-    handleClick(turn, position){
-      if(this.state.moveList.every(item => { return item === 'X' || item === 'O'}) && this.state.moveList.length === 8){
-        alert('Game Over!')
+    const findAvailablePositions = () => {
+      let availablePositions = []
+      for(let i = 0; i < 9; i++){
+        if(!positions[i]){
+          availablePositions.push(i);
+        }
       }
-      const newMove = this.state.currentMove === 'X' ? 'O' : 'X';
-      const moves = [...this.state.moveList];
-      moves[position] = turn;
-      this.setState({moveList: [...moves], currentMove: newMove})
-      console.log(this.state.moveList)
+      return availablePositions;
     }
-    
-    render(){
-      return (
+
+    const randomComputerMove = (computer = 'O') => {
+      console.log(1)
+      const availablePositions = findAvailablePositions();
+      const randomMove = availablePositions[Math.floor(Math.random() * 
+        availablePositions.length)];
+      positions[randomMove] = computer;
+      setPositions([...positions]);
+      setMoves(moves + 1);
+      setTimeout(() => {
+        const winner = calculateWinner([...positions]);
+        if(!winner){
+          setTurn('Your');
+        }
+      }, 0);
+    }
+
+    const reset = () => {
+      setPositions([]);
+      setMoves(0);
+      setPlayerScore(0);
+      setComputerScore(0);
+    }
+
+    const calculateWinner = positions => {
+      const lines = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+        [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
+      ];
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (positions[a] && positions[a] === positions[b] && positions[a] === positions[c]) {
+          if(positions[a] === 'X'){
+            const ans = window.confirm('You won! Keep playing?');
+            if(ans){
+              setPositions([]);
+              setMoves(0);
+            }
+            else{
+              //menu
+            }
+            setPlayerScore(playerScore + 1);
+          }
+          else{
+            const ans = window.confirm('Better luck next time! Try again?');
+            if(ans){
+              setPositions([]);
+              setMoves(0);
+              setTurn('Your');
+            }
+            else{
+              //menu
+            }
+            setComputerScore(computerScore + 1);
+          }
+          return true;
+        }
+      }
+      return false;
+    }
+
+    useEffect(() => {
+      // End game when all moves have been made.
+      if(moves === 9){
+        alert('Game Over! No winner.');
+        reset();
+      }
+    }, [moves]);
+
+    useEffect(() => {
+      if(turn === 'Computers'){
+        setTimeout(randomComputerMove, 500);
+      }
+    }, [turn])
+
+    return (
         <div className="App-body">
-          <h1>{this.state.currentMove}'s Turn</h1>
-          <Board value={this.state.moveList} onClick={this.handleClick} turn={this.state.currentMove}/>
+          <h1>Tic Tac Toe</h1>
+          <div id="menu">
+            <button className="menu-button game-type">1 Player</button>
+            <button className="menu-button game-type">2 Player</button>
+          </div>
+          <div><button className="menu-button" id='reset' onClick={reset}
+          >Reset</button></div>
+          <div id="scores">{playerScore}:{computerScore}</div>
+          <h3>{turn} Turn</h3>
+          <Board value={positions} onClick={handleClick} turn={currentMove}/>
         </div>
-      );
-    }
+    );
 }
 
 export default App;

@@ -1,15 +1,34 @@
-button{
-    background-color: rgb(231, 231, 231);
-    width: 33.333%;
+.block{
+    background-color: #fff;
+    width: 130px;
     height: 120px;
     font-size: 60px;
-    border: 1px solid #000;
-}
-
-button:hover{
-    background-color: rgb(231, 231, 231, 0.4);
-}
-
-.v-align{
+    border: 1.5px solid #007bff;
     vertical-align: middle;
+    transition: background-color 0.5s;
+    font-family: "Comic Sans Ms", "Comic Sans", Comic Sans MS, sans-serif;
+}
+
+.block:hover{
+    filter: initial;
+}
+
+#first-row .block{
+    border-top: none;
+}
+
+.block:first-child{
+    border-left: none;
+}
+
+.n-bordered tr td:first-child{
+    border-left: none;
+}
+
+#third-row .block{
+    border-bottom: none;
+}
+
+.block:last-child{
+    border-right: none;
 }

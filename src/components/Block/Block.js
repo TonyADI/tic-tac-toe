@@ -1,20 +1,18 @@
 import React from 'react';
 import './Block.css';
 
-export class Block extends React.Component{
-    constructor(props){
-        super(props);
-        this.handleClick = this.handleClick.bind(this)
+export const Block = props => {
+    const handleClick = () => {
+        props.onClick(props.turn, props.position)
     }
 
-    handleClick(){
-        this.props.onClick(this.props.turn, this.props.position)
-    }
-    render(){
-        return(
-            <button onClick={this.handleClick} className="v-align" disabled={this.props.value}>{this.props.value}
-            </button>
-        )
-    }
+    return(
+        <button onClick={handleClick} className="block" 
+        style={{color: props.value === 'X' ? '#28a745' : '#ffc107'}}
+        disabled={props.value}>
+           {props.value}
+        </button>
+    )
+    
 }
 

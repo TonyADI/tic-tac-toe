@@ -1,4 +1,46 @@
 .App-body {
   text-align: center;
+  color: #071420;
+  font-family: "Open Sans",sans-serif;
+  opacity: 0;
+  animation: drop-in 1s ease 0.25s forwards;
 }
 
+@keyframes drop-in{
+  from{opacity: 0; transform: translateY(-50px);}
+  to{opacity: 1; transform: translateY(0px);}
+}
+
+button{
+  transition: filter 0.5s;
+}
+
+button:hover{
+  filter: brightness(90%);
+  cursor: pointer;
+}
+
+button:focus{
+  outline: none;
+}
+
+.menu-button {
+  border: 0;
+  border-radius: 40px;
+  color: #fff;
+  padding: 7.5px 20px;
+}
+
+.game-type{
+  background-color: rgb(69, 218, 218);
+  margin: auto 10px;
+}
+
+#reset{
+  background-color: rgb(179, 128, 226);
+  margin: 20px auto;
+}
+
+#scores{
+  font-size: 70px;
+}
