@@ -3,58 +3,29 @@ import './App.css';
 import { Board } from '../Board/Board';
 
 const App = () => {
-    const randomMove = ['X', 'O'][Math.floor(Math.random()*2)]
-    const [currentMove, setCurrentMove] = useState(randomMove);
+    const [currentMove, setCurrentMove] = useState('X');
     const [positions, setPositions] = useState([]);
     const [moves, setMoves] = useState(0);
+    const [playerOneScore, setPlayerOneScore] = useState(0);
+    const [playerTwoScore, setPlayerTwoScore] = useState(0);
     const [won, setWon] = useState(false);
-    const [turn, setTurn] = useState('Your');
-    const [playerScore, setPlayerScore] = useState(0);
-    const [computerScore, setComputerScore] = useState(0);
 
     const handleClick = (turn, position) => {
-      positions[position] = 'X';
+      positions[position] = turn;
       setPositions([...positions]);
       setMoves(moves + 1);
       setTimeout(() => {
         const winner = calculateWinner([...positions]);
         if(!winner){
-          setTurn('Computers');
+          const newMove = currentMove === 'X' ? 'O' : 'X';
+          setCurrentMove(newMove);
         }
-      }, 0);
-    }
-
-    const findAvailablePositions = () => {
-      let availablePositions = []
-      for(let i = 0; i < 9; i++){
-        if(!positions[i]){
-          availablePositions.push(i);
-        }
-      }
-      return availablePositions;
-    }
-
-    const randomComputerMove = (computer = 'O') => {
-      console.log(1)
-      const availablePositions = findAvailablePositions();
-      const randomMove = availablePositions[Math.floor(Math.random() * 
-        availablePositions.length)];
-      positions[randomMove] = computer;
-      setPositions([...positions]);
-      setMoves(moves + 1);
-      setTimeout(() => {
-        const winner = calculateWinner([...positions]);
-        if(!winner){
-          setTurn('Your');
-        }
-      }, 0);
+      })
     }
 
     const reset = () => {
       setPositions([]);
       setMoves(0);
-      setPlayerScore(0);
-      setComputerScore(0);
     }
 
     const calculateWinner = positions => {
@@ -67,7 +38,7 @@ const App = () => {
           const [a, b, c] = lines[i];
           if (positions[a] && positions[a] === positions[b] && positions[a] === positions[c]) {
             if(positions[a] === 'X'){
-              const ans = window.confirm('You won! Keep playing?');
+              const ans = window.confirm('X wins! Play again?');
               if(ans){
                 setPositions([]);
                 setMoves(0);
@@ -75,43 +46,30 @@ const App = () => {
               else{
                 //menu
               }
-              setPlayerScore(playerScore + 1);
+              setPlayerOneScore(playerOneScore + 1);
             }
             else{
-              const ans = window.confirm('Better luck next time! Try again?');
+              const ans = window.confirm('O wins! Play again?');
               if(ans){
                 setPositions([]);
                 setMoves(0);
-                setTurn('Your');
               }
               else{
                 //menu
               }
-              setComputerScore(computerScore + 1);
+              setPlayerTwoScore(playerTwoScore + 1);
             }
-            return true;
           }
         }
-        if(moves === 9){
-          const ans = window.confirm('Game Over! No winner. Try Again?');
-          if(ans){
-            setPositions([]);
-            setMoves(0);
-            setTurn('Your');
-          }
-          else{
-            // menu
-          }
+      }
+      if(moves === 8){
+        const ans = window.confirm('Game Over! No winner. Try Again?');
+        if(ans){
+          setPositions([]);
+          setMoves(0);
         }
-        return false;
       }
     }
-
-    useEffect(() => {
-      if(turn === 'Computers'){
-        setTimeout(randomComputerMove, 500);
-      }
-    }, [turn])
 
     return (
         <div className="App-body">
@@ -122,9 +80,11 @@ const App = () => {
           </div>
           <div><button className="menu-button" id='reset' onClick={reset}
           >Reset</button></div>
-          <div id="scores">{playerScore}:{computerScore}</div>
-          <h3>{turn} Turn</h3>
-          <Board value={positions} onClick={handleClick} turn={currentMove}/>
+          <div>
+          <div id="scores">{playerOneScore}:{playerTwoScore}</div>
+            <h3>{currentMove}'s Turn</h3>
+            <Board value={positions} onClick={handleClick} turn={currentMove}/>
+          </div>
         </div>
     );
 }
