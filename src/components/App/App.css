@@ -44,3 +44,8 @@ button:focus{
 #scores{
   font-size: 70px;
 }
+
+#two-player-container, #one-player-container{
+  opacity: 0;
+  animation: drop-in 1s ease 0.25s forwards;
+}
