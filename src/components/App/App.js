@@ -15,7 +15,7 @@ const App = () => {
     const [twoPlayer, setTwoPlayer] = useState(false);
 
     const handleClick = (turn, position) => {
-      positions[position] = twoPlayer ? turn : ' X';
+      positions[position] = twoPlayer ? turn : 'X';
       setPositions([...positions]);
       setMoves(moves + 1);
       setTimeout(() => {
@@ -61,8 +61,6 @@ const App = () => {
     const reset = () => {
       setPositions([]);
       setMoves(0);
-      setOnePlayer(false);
-      setTwoPlayer(false);
       setPlayerTwoScore(0);
       setPlayerOneScore(0);
       setTurn('Your');
@@ -84,32 +82,46 @@ const App = () => {
               if(ans){
                 setPositions([]);
                 setMoves(0);
+                if(onePlayer){
+                  setPlayerScore(playerScore + 1);
+                  setTurn('Computers');
+                }
+                else{
+                  setPlayerOneScore(playerOneScore + 1);
+                }
               }
               else{
                 reset();
               }
-              setPlayerOneScore(playerOneScore + 1);
             }
             else{
               const ans = window.confirm('O wins! Play again?');
               if(ans){
                 setPositions([]);
                 setMoves(0);
+                if(onePlayer){
+                  setComputerScore(computerScore + 1);
+                  setTurn('Your');
+                }
+                else{
+                  setPlayerTwoScore(playerTwoScore + 1);
+                }
               }
               else{
                 reset();
               }
-              setPlayerTwoScore(playerTwoScore + 1);
             }
+            return true;
           }
         }
-      }
-      if(moves === 8){
-        const ans = window.confirm('Game Over! No winner. Try Again?');
-        if(ans){
-          setPositions([]);
-          setMoves(0);
+        if(moves === 8){
+          const ans = window.confirm('Game Over! No winner. Try Again?');
+          if(ans){
+            setPositions([]);
+            setMoves(0);
+          }
         }
+        return false;
       }
     }
 
@@ -126,6 +138,12 @@ const App = () => {
         default:
           console.log('Wrong Value');
       }
+      setMoves(0);
+      setPositions([]);
+      setPlayerOneScore(0);
+      setPlayerTwoScore(0);
+      setPlayerScore(0);
+      setComputerScore(0);
     }
 
     useEffect(() => {
@@ -143,8 +161,8 @@ const App = () => {
             <button className="menu-button game-type" value="two-player" 
             onClick={setGameType}>2 Player</button>
           </div>
-          <div><button className="menu-button" id='reset' onClick={reset}
-          >Reset</button></div>
+          <div><button className="menu-button" id='reset' onClick={reset}>
+            Reset</button></div>
           
           {onePlayer && <div id="one-player-container">
             <div id="scores">{playerScore}:{computerScore}</div>
