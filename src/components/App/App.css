@@ -2,6 +2,7 @@
   text-align: center;
   color: #071420;
   font-family: "Open Sans",sans-serif;
+  min-width: 424px;
   opacity: 0;
   animation: drop-in 1s ease 0.25s forwards;
 }

@@ -43,7 +43,6 @@ const App = () => {
     }
 
     const randomComputerMove = (computer = 'O') => {
-      console.log(1)
       const availablePositions = findAvailablePositions();
       const randomMove = availablePositions[Math.floor(Math.random() * 
         availablePositions.length)];
