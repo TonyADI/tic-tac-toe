@@ -13,11 +13,14 @@ const App = () => {
     const [playerTwoScore, setPlayerTwoScore] = useState(0);
     const [onePlayer, setOnePlayer] = useState(false);
     const [twoPlayer, setTwoPlayer] = useState(false);
+    const [computerMoves, setComputerMoves] = useState([]);
+    const [playerMoves, setPlayerMoves] = useState([]);
 
     const handleClick = (turn, position) => {
       positions[position] = twoPlayer ? turn : 'X';
       setPositions([...positions]);
       setMoves(moves + 1);
+      setPlayerMoves([...playerMoves, position])
       setTimeout(() => {
         const winner = calculateWinner([...positions]);
         if(!winner){
@@ -57,6 +60,119 @@ const App = () => {
       }, 0);
     }
 
+    const suggestedComputerMove = (computer = 'O') => {
+      if(moves === 0){
+        const optimalPositions = [0, 2, 6, 8];
+        const randomMove = optimalPositions[Math.floor(Math.random()*optimalPositions.length)];
+        positions[randomMove] = computer;
+        setComputerMoves([...computerMoves, randomMove]);
+      }
+      else if(moves === 1){
+        if(positions[4]){
+          const optimalPositions = [0, 2, 6, 8];
+          const randomMove = optimalPositions[Math.floor(Math.random()*optimalPositions.length)];
+          positions[randomMove] = computer;
+          setPositions([...positions]);
+          setComputerMoves([...computerMoves, randomMove]);
+        }
+        else{
+          positions[4] = computer;
+          setPositions([...positions]);
+          setComputerMoves([...computerMoves, 4]);
+          computerMoves.push(4);
+        }
+      }
+      else if(moves === 2){
+        // could be better
+        const availablePositions = findAvailablePositions();
+        const randomMove = availablePositions[Math.floor(Math.random() * 
+          availablePositions.length)];
+        positions[randomMove] = computer;
+        setPositions([...positions]);
+        setComputerMoves([...computerMoves, randomMove])
+      }
+      else if(moves === 3){
+        const lines = [
+          [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+          [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
+        ];
+        for (let i = 0; i < lines.length; i++) {
+          if(lines[i].indexOf(playerMoves[0]) > -1 && lines[i].indexOf(playerMoves[1]) > -1){
+            const optimalMove = lines[i].find(item => 
+              item !== playerMoves[0] && item !== playerMoves[1]);
+            // checks if i already blocked the move
+            if(!positions[optimalMove]){
+              positions[optimalMove] = computer;
+              setPositions([...positions]);
+              setComputerMoves([...computerMoves, optimalMove]);
+              setTurn('Yours');
+              setMoves(moves + 1)
+              return null;
+            }
+            break;
+          }
+        }
+        const availablePositions = findAvailablePositions();
+        const randomMove = availablePositions[Math.floor(Math.random() * 
+          availablePositions.length)];
+        positions[randomMove] = computer;
+        setPositions([...positions]);
+        setComputerMoves([...computerMoves, randomMove]);
+      }
+      else if(moves >= 4){
+        const lines = [
+          [0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6],
+          [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6],
+        ];
+        console.log(moves);
+        console.log(playerMoves.length)
+        // works fine
+        for (let i = 0; i < lines.length; i++) {
+          if(lines[i].indexOf(computerMoves[moves - 4]) > -1 && lines[i].indexOf(computerMoves[moves - 5]) > -1){
+            console.log(false)
+            const optimalMove = lines[i].find(item => 
+              item !== computerMoves[moves - 4] && item !== computerMoves[moves - 5]);
+              console.log(optimalMove)
+            if(!positions[optimalMove]){
+              positions[optimalMove] = computer;
+              setPositions([...positions]);
+              setComputerMoves([...computerMoves, optimalMove]);
+              setTurn('Yours');
+              setMoves(moves + 1);
+              return null;
+            }
+            break;
+          }
+        }
+        // account for all combinations, compare newest move to all moves, 2 move difference only works when i go first
+        for (let i = 0; i < lines.length; i++) {
+          if(lines[i].indexOf(playerMoves[moves - 3]) > -1 && lines[i].indexOf(playerMoves[moves - 5]) > -1){
+            console.log(true)
+            const optimalMove = lines[i].find(item => 
+              item !== playerMoves[moves - 3] && item !== playerMoves[moves - 5]);
+            if(!positions[optimalMove]){
+              positions[optimalMove] = computer;
+              setPositions([...positions]);
+              setComputerMoves([...computerMoves, optimalMove]);
+              setTurn('Yours');
+              setMoves(moves + 1);
+              return null;
+            }
+            break;
+          }
+        }
+        // search for optimal move while trying to block opponent?
+        const availablePositions = findAvailablePositions();
+        const randomMove = availablePositions[Math.floor(Math.random() * 
+          availablePositions.length)];
+        positions[randomMove] = computer;
+        setPositions([...positions]);
+        setComputerMoves([...computerMoves, randomMove]);
+      }
+      setTurn('Your');
+      setMoves(moves + 1)
+    }
+
     const reset = () => {
       setPositions([]);
       setMoves(0);
@@ -65,6 +181,8 @@ const App = () => {
       setTurn('Your');
       setPlayerScore(0);
       setComputerScore(0);
+      setPlayerMoves([]);
+      setComputerMoves([])
     }
 
     const calculateWinner = positions => {
@@ -147,7 +265,7 @@ const App = () => {
 
     useEffect(() => {
       if(turn === 'Computers'){
-        setTimeout(randomComputerMove, 500);
+        setTimeout(suggestedComputerMove, 500);
       }
     }, [turn])
 
