@@ -65,29 +65,20 @@ const App = () => {
     }
 
     const suggestedComputerMove = (computer = 'O') => {
-      if(moves === 0){
+      if(moves === 0 || (moves === 1 && positions[4])){
         const optimalPositions = [0, 2, 6, 8];
-        const randomMove = optimalPositions[Math.floor(Math.random()*optimalPositions.length)];
+        const randomMove = optimalPositions[Math.floor(Math.random()
+          *optimalPositions.length)];
         positions[randomMove] = computer;
+        setPositions([...positions]);
         setComputerMoves([...computerMoves, randomMove]);
       }
-      else if(moves === 1){
-        if(positions[4]){
-          const optimalPositions = [0, 2, 6, 8];
-          const randomMove = optimalPositions[Math.floor(Math.random()*optimalPositions.length)];
-          positions[randomMove] = computer;
-          setPositions([...positions]);
-          setComputerMoves([...computerMoves, randomMove]);
-        }
-        else{
+      else if(moves === 1 && !positions[4]){
           positions[4] = computer;
           setPositions([...positions]);
           setComputerMoves([...computerMoves, 4]);
-          computerMoves.push(4);
-        }
       }
       else if(moves === 2){
-        // could be better
         const availablePositions = findAvailablePositions();
         const randomMove = availablePositions[Math.floor(Math.random() * 
           availablePositions.length)];
@@ -97,21 +88,23 @@ const App = () => {
       }
       else if(moves === 3){
         for (let i = 0; i < lines.length; i++) {
-          if(lines[i].indexOf(playerMoves[0]) > -1 && lines[i].indexOf(playerMoves[1]) > -1){
+          if(lines[i].indexOf(playerMoves[0]) > -1 && lines[i].indexOf(
+            playerMoves[1]) > -1){
             const optimalMove = lines[i].find(item => 
               item !== playerMoves[0] && item !== playerMoves[1]);
-            // checks if i already blocked the move
+            // Checks if position has already played
             if(!positions[optimalMove]){
               positions[optimalMove] = computer;
               setPositions([...positions]);
               setComputerMoves([...computerMoves, optimalMove]);
               setTurn('Your');
               setMoves(moves + 1)
-              return null;
+              return;
             }
             break;
           }
         }
+        // Play a random move
         const availablePositions = findAvailablePositions();
         const randomMove = availablePositions[Math.floor(Math.random() * 
           availablePositions.length)];
@@ -120,18 +113,13 @@ const App = () => {
         setComputerMoves([...computerMoves, randomMove]);
       }
       else if(moves >= 4){
-        console.log(moves);
-        console.log(playerMoves.length)
-        // works fine if i play first
-        // check if computer can win
+        // Check if computer can win on next move
         for (let i = 0; i < lines.length; i++) {
-          if(lines[i].indexOf(computerMoves[moves - 4]) > -1 && lines[i].indexOf(computerMoves[moves - 5]) > -1){
-            console.log(false)
+          if(lines[i].indexOf(computerMoves[moves - 4]) > -1 && lines[i].indexOf(
+            computerMoves[moves - 5]) > -1){
             const optimalMove = lines[i].find(item => 
               item !== computerMoves[moves - 4] && item !== computerMoves[moves - 5]);
-              console.log(optimalMove)
             if(!positions[optimalMove]){
-              console.log(333)
               positions[optimalMove] = computer;
               setPositions([...positions]);
               setComputerMoves([...computerMoves, optimalMove]);
@@ -142,19 +130,19 @@ const App = () => {
                   setTurn('Your');  
                 }
               }, 0);
-              return null;
+              return;
             }
             break;
           }
         }
-        // account for all combinations, compare newest move to all moves, 2 move difference only works when i go first
-        //let ind = 0;
+        // Compare players newest move to their previous moves
         for(let ind = 0; ind < playerMoves.length-1; ind++){
           for (let i = 0; i < lines.length; i++) {
-            if(lines[i].indexOf(playerMoves[ind]) > -1 && lines[i].indexOf(playerMoves[playerMoves.length - 1]) > -1){  
-              console.log('yeheyeh')
+            if(lines[i].indexOf(playerMoves[ind]) > -1 && lines[i].indexOf(
+              playerMoves[playerMoves.length - 1]) > -1){
               const optimalMove = lines[i].find(item => 
-                item !== playerMoves[ind] && item !== playerMoves[playerMoves.length - 1]);
+                item !== playerMoves[ind] && item !== playerMoves[playerMoves.length 
+                  - 1]);
               if(!positions[optimalMove]){
                 positions[optimalMove] = computer;
                 setPositions([...positions]);
@@ -166,61 +154,16 @@ const App = () => {
                     setTurn('Your');  
                   }
                 }, 0);
-                return null;
+                return;
               }
               break;
             }
-        }
-      }
-      /*
-        for (let i = 0; i < lines.length; i++) {
-          if(lines[i].indexOf(playerMoves[moves - 3]) > -1 && lines[i].indexOf(playerMoves[moves - 5]) > -1){
-            console.log('3/5')
-            const optimalMove = lines[i].find(item => 
-              item !== playerMoves[moves - 3] && item !== playerMoves[moves - 5]);
-            if(!positions[optimalMove]){
-              positions[optimalMove] = computer;
-              setPositions([...positions]);
-              setComputerMoves([...computerMoves, optimalMove]);
-              setMoves(moves + 1);
-              setTimeout(() => {
-                const winner = calculateWinner([...positions]);
-                if(!winner){
-                  setTurn('Your');  
-                }
-              }, 0);
-              return null;
-            }
-            break;
-          }
-          if(lines[i].indexOf(playerMoves[moves - 4]) > -1 && lines[i].indexOf(playerMoves[moves - 3]) > -1){
-            console.log('4/5')
-            console.log(playerMoves[moves-4])
-            const optimalMove = lines[i].find(item => 
-              item !== playerMoves[moves - 4] && item !== playerMoves[moves - 3]);
-              console.log(optimalMove);
-            if(!positions[optimalMove]){
-              console.log(666)
-              positions[optimalMove] = computer;
-              setPositions([...positions]);
-              setComputerMoves([...computerMoves, optimalMove]);
-              setMoves(moves + 1);
-              setTimeout(() => {
-                const winner = calculateWinner([...positions]);
-                if(!winner){
-                  setTurn('Your');  
-                }
-              }, 0);
-              return null;
-            }
-            break;
           }
         }
-        */
-        // search for optimal move while trying to block opponent?
+        // Play a random move
         const availablePositions = findAvailablePositions();
         const randomMove = availablePositions[Math.floor(Math.random() * 
-          availablePositions.length)];
+            availablePositions.length)];
         positions[randomMove] = computer;
         setPositions([...positions]);
         setComputerMoves([...computerMoves, randomMove]);
@@ -245,7 +188,8 @@ const App = () => {
       if(moves > 3){
         for (let i = 0; i < lines.length; i++) {
           const [a, b, c] = lines[i];
-          if (positions[a] && positions[a] === positions[b] && positions[a] === positions[c]) {
+          if (positions[a] && positions[a] === positions[b] && 
+            positions[a] === positions[c]) {
             if(positions[a] === 'X'){
               const ans = window.confirm('X wins! Play again?');
               if(ans){
@@ -287,7 +231,8 @@ const App = () => {
             return true;
           }
         }
-        if(moves === 8){
+        console.log(moves)
+        if(moves >= 8){
           const ans = window.confirm('Game Over! No winner. Try Again?');
           if(ans){
             setPositions([]);
