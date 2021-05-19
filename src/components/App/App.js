@@ -123,6 +123,7 @@ const App = () => {
         console.log(moves);
         console.log(playerMoves.length)
         // works fine if i play first
+        // check if computer can win
         for (let i = 0; i < lines.length; i++) {
           if(lines[i].indexOf(computerMoves[moves - 4]) > -1 && lines[i].indexOf(computerMoves[moves - 5]) > -1){
             console.log(false)
@@ -130,6 +131,7 @@ const App = () => {
               item !== computerMoves[moves - 4] && item !== computerMoves[moves - 5]);
               console.log(optimalMove)
             if(!positions[optimalMove]){
+              console.log(333)
               positions[optimalMove] = computer;
               setPositions([...positions]);
               setComputerMoves([...computerMoves, optimalMove]);
@@ -146,12 +148,36 @@ const App = () => {
           }
         }
         // account for all combinations, compare newest move to all moves, 2 move difference only works when i go first
+        //let ind = 0;
+        for(let ind = 0; ind < playerMoves.length-1; ind++){
+          for (let i = 0; i < lines.length; i++) {
+            if(lines[i].indexOf(playerMoves[ind]) > -1 && lines[i].indexOf(playerMoves[playerMoves.length - 1]) > -1){  
+              console.log('yeheyeh')
+              const optimalMove = lines[i].find(item => 
+                item !== playerMoves[ind] && item !== playerMoves[playerMoves.length - 1]);
+              if(!positions[optimalMove]){
+                positions[optimalMove] = computer;
+                setPositions([...positions]);
+                setComputerMoves([...computerMoves, optimalMove]);
+                setMoves(moves + 1);
+                setTimeout(() => {
+                  const winner = calculateWinner([...positions]);
+                  if(!winner){
+                    setTurn('Your');  
+                  }
+                }, 0);
+                return null;
+              }
+              break;
+            }
+        }
+      }
+      /*
         for (let i = 0; i < lines.length; i++) {
-          if((lines[i].indexOf(playerMoves[moves - 3]) > -1 && lines[i].indexOf(playerMoves[moves - 5]) > -1) ||
-          (lines[i].indexOf(playerMoves[moves - 4]) > -1 && lines[i].indexOf(playerMoves[moves - 5]) > -1)){
-            console.log(true)
+          if(lines[i].indexOf(playerMoves[moves - 3]) > -1 && lines[i].indexOf(playerMoves[moves - 5]) > -1){
+            console.log('3/5')
             const optimalMove = lines[i].find(item => 
-              item !== playerMoves[moves - 3] && item !== playerMoves[moves - 5] && item !== playerMoves[moves - 4]);
+              item !== playerMoves[moves - 3] && item !== playerMoves[moves - 5]);
             if(!positions[optimalMove]){
               positions[optimalMove] = computer;
               setPositions([...positions]);
@@ -167,7 +193,30 @@ const App = () => {
             }
             break;
           }
+          if(lines[i].indexOf(playerMoves[moves - 4]) > -1 && lines[i].indexOf(playerMoves[moves - 3]) > -1){
+            console.log('4/5')
+            console.log(playerMoves[moves-4])
+            const optimalMove = lines[i].find(item => 
+              item !== playerMoves[moves - 4] && item !== playerMoves[moves - 3]);
+              console.log(optimalMove);
+            if(!positions[optimalMove]){
+              console.log(666)
+              positions[optimalMove] = computer;
+              setPositions([...positions]);
+              setComputerMoves([...computerMoves, optimalMove]);
+              setMoves(moves + 1);
+              setTimeout(() => {
+                const winner = calculateWinner([...positions]);
+                if(!winner){
+                  setTurn('Your');  
+                }
+              }, 0);
+              return null;
+            }
+            break;
+          }
         }
+        */
         // search for optimal move while trying to block opponent?
         const availablePositions = findAvailablePositions();
         const randomMove = availablePositions[Math.floor(Math.random() * 
