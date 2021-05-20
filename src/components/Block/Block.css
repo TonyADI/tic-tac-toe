@@ -7,6 +7,7 @@
     vertical-align: middle;
     transition: background-color 0.5s;
     font-family: "Comic Sans Ms", "Comic Sans", Comic Sans MS, sans-serif;
+    text-align: center;
 }
 
 .block:hover{

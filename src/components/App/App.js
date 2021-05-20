@@ -24,7 +24,7 @@ const App = () => {
       positions[position] = twoPlayer ? turn : 'X';
       setPositions([...positions]);
       setMoves(moves + 1);
-      setPlayerMoves([...playerMoves, position])
+      setPlayerMoves([...playerMoves, position]);
       setTimeout(() => {
         const winner = calculateWinner([...positions]);
         if(!winner){
@@ -197,16 +197,19 @@ const App = () => {
                 reset();
               }
             }
-            return true;
+            return;
           }
         }
         if(moves >= 8){
-          const ans = window.confirm('Game Over! No winner. Try Again?');
+          const ans = window.confirm('Stalemate. Try Again?');
           if(ans){
             restart();
           }
+          else{
+            reset();
+          }
         }
-        return false;
+        return;
       }
     }
 
