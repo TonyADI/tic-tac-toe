@@ -40,7 +40,7 @@ const App = () => {
     }
 
     const findAvailablePositions = () => {
-      let availablePositions = []
+      let availablePositions = [];
       for(let i = 0; i < 9; i++){
         if(!positions[i]){
           availablePositions.push(i);
@@ -48,22 +48,7 @@ const App = () => {
       }
       return availablePositions;
     }
-
-    const randomComputerMove = (computer = 'O') => {
-      const availablePositions = findAvailablePositions();
-      const randomMove = availablePositions[Math.floor(Math.random() * 
-        availablePositions.length)];
-      positions[randomMove] = computer;
-      setPositions([...positions]);
-      setMoves(moves + 1);
-      setTimeout(() => {
-        const winner = calculateWinner([...positions]);
-        if(!winner){
-          setTurn('Your');
-        }
-      }, 0);
-    }
-
+    
     const suggestedComputerMove = (computer = 'O') => {
       if(moves === 0 || (moves === 1 && positions[4])){
         const optimalPositions = [0, 2, 6, 8];
@@ -231,7 +216,6 @@ const App = () => {
             return true;
           }
         }
-        console.log(moves)
         if(moves >= 8){
           const ans = window.confirm('Game Over! No winner. Try Again?');
           if(ans){
