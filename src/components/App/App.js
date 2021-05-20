@@ -49,6 +49,28 @@ const App = () => {
       return availablePositions;
     }
     
+    const playRandomMove = computer => {
+      const availablePositions = findAvailablePositions();
+      const randomMove = availablePositions[Math.floor(Math.random() * 
+        availablePositions.length)];
+      positions[randomMove] = computer;
+      setPositions([...positions]);
+      setComputerMoves([...computerMoves, randomMove]);
+    }
+
+    const playOptimalMove = (optimalMove, computer) => {
+      positions[optimalMove] = computer;
+      setPositions([...positions]);
+      setComputerMoves([...computerMoves, optimalMove]);
+      setMoves(moves + 1);
+      setTimeout(() => {
+        const winner = calculateWinner([...positions]);
+        if(!winner){
+          setTurn('Your');  
+        }
+      }, 0);
+    }
+
     const suggestedComputerMove = (computer = 'O') => {
       if(moves === 0 || (moves === 1 && positions[4])){
         const optimalPositions = [0, 2, 6, 8];
@@ -64,12 +86,7 @@ const App = () => {
           setComputerMoves([...computerMoves, 4]);
       }
       else if(moves === 2){
-        const availablePositions = findAvailablePositions();
-        const randomMove = availablePositions[Math.floor(Math.random() * 
-          availablePositions.length)];
-        positions[randomMove] = computer;
-        setPositions([...positions]);
-        setComputerMoves([...computerMoves, randomMove])
+        playRandomMove(computer);
       }
       else if(moves === 3){
         for (let i = 0; i < lines.length; i++) {
@@ -77,25 +94,15 @@ const App = () => {
             playerMoves[1]) > -1){
             const optimalMove = lines[i].find(item => 
               item !== playerMoves[0] && item !== playerMoves[1]);
-            // Checks if position has already played
+            // Checks if position has already been played
             if(!positions[optimalMove]){
-              positions[optimalMove] = computer;
-              setPositions([...positions]);
-              setComputerMoves([...computerMoves, optimalMove]);
-              setTurn('Your');
-              setMoves(moves + 1)
+              playOptimalMove(optimalMove, computer);
               return;
             }
             break;
           }
         }
-        // Play a random move
-        const availablePositions = findAvailablePositions();
-        const randomMove = availablePositions[Math.floor(Math.random() * 
-          availablePositions.length)];
-        positions[randomMove] = computer;
-        setPositions([...positions]);
-        setComputerMoves([...computerMoves, randomMove]);
+        playRandomMove(computer);
       }
       else if(moves >= 4){
         // Check if computer can win on next move
@@ -105,16 +112,7 @@ const App = () => {
             const optimalMove = lines[i].find(item => 
               item !== computerMoves[moves - 4] && item !== computerMoves[moves - 5]);
             if(!positions[optimalMove]){
-              positions[optimalMove] = computer;
-              setPositions([...positions]);
-              setComputerMoves([...computerMoves, optimalMove]);
-              setMoves(moves + 1);
-              setTimeout(() => {
-                const winner = calculateWinner([...positions]);
-                if(!winner){
-                  setTurn('Your');  
-                }
-              }, 0);
+              playOptimalMove(optimalMove, computer);
               return;
             }
             break;
@@ -129,29 +127,14 @@ const App = () => {
                 item !== playerMoves[ind] && item !== playerMoves[playerMoves.length 
                   - 1]);
               if(!positions[optimalMove]){
-                positions[optimalMove] = computer;
-                setPositions([...positions]);
-                setComputerMoves([...computerMoves, optimalMove]);
-                setMoves(moves + 1);
-                setTimeout(() => {
-                  const winner = calculateWinner([...positions]);
-                  if(!winner){
-                    setTurn('Your');  
-                  }
-                }, 0);
+                playOptimalMove(optimalMove, computer);
                 return;
               }
               break;
             }
           }
         }
-        // Play a random move
-        const availablePositions = findAvailablePositions();
-        const randomMove = availablePositions[Math.floor(Math.random() * 
-            availablePositions.length)];
-        positions[randomMove] = computer;
-        setPositions([...positions]);
-        setComputerMoves([...computerMoves, randomMove]);
+        playRandomMove(computer);
       }
       setMoves(moves + 1);
       setTurn('Your');
@@ -169,6 +152,13 @@ const App = () => {
       setComputerMoves([])
     }
 
+    const restart = () => {
+      setPositions([]);
+      setMoves(0);
+      setPlayerMoves([]);
+      setComputerMoves([]);
+    }
+
     const calculateWinner = positions => {
       if(moves > 3){
         for (let i = 0; i < lines.length; i++) {
@@ -178,10 +168,7 @@ const App = () => {
             if(positions[a] === 'X'){
               const ans = window.confirm('X wins! Play again?');
               if(ans){
-                setPositions([]);
-                setMoves(0);
-                setPlayerMoves([]);
-                setComputerMoves([]);
+                restart();
                 if(onePlayer){
                   setPlayerScore(playerScore + 1);
                   setTurn('Computers');
@@ -197,10 +184,7 @@ const App = () => {
             else{
               const ans = window.confirm('O wins! Play again?');
               if(ans){
-                setPositions([]);
-                setMoves(0);
-                setPlayerMoves([]);
-                setComputerMoves([]);
+                restart();
                 if(onePlayer){
                   setComputerScore(computerScore + 1);
                   setTurn('Your');
@@ -219,10 +203,7 @@ const App = () => {
         if(moves >= 8){
           const ans = window.confirm('Game Over! No winner. Try Again?');
           if(ans){
-            setPositions([]);
-            setMoves(0);
-            setPlayerMoves([]);
-            setComputerMoves([]);
+            restart();
           }
         }
         return false;
