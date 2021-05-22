@@ -135,6 +135,9 @@ const App = () => {
           }
         }
         playRandomMove(computer);
+        setTimeout(() => {
+          calculateWinner([...positions]);
+        }, 0);
       }
       setMoves(moves + 1);
       setTurn('Your');
