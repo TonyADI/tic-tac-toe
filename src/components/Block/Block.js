@@ -1,16 +1,18 @@
 import React from 'react';
 import './Block.css';
 
-export const Block = props => {
+export const Block = ({onClick, turn, position, value}) => {
     const handleClick = () => {
-        props.onClick(props.turn, props.position)
+        onClick(turn, position)
     }
 
     return(
-        <button onClick={handleClick} className="block" 
-        style={{color: props.value === 'X' ? '#28a745' : '#ffc107'}}
-        disabled={props.value}>
-           {props.value}
+        <button 
+            onClick={handleClick} 
+            className="block" 
+            style={{color: value === 'X' ? '#28a745' : '#ffc107'}}
+            disabled={Boolean(value)}>
+                {value}
         </button>
     )
     
