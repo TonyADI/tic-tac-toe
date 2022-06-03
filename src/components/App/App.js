@@ -11,8 +11,7 @@ const App = () => {
     const [computerScore, setComputerScore] = useState(0);
     const [playerOneScore, setPlayerOneScore] = useState(0);
     const [playerTwoScore, setPlayerTwoScore] = useState(0);
-    const [onePlayer, setOnePlayer] = useState(false);
-    const [twoPlayer, setTwoPlayer] = useState(false);
+    const [gameType, setGameType] = useState(0);
     const [computerMoves, setComputerMoves] = useState([]);
     const [playerMoves, setPlayerMoves] = useState([]);
     const lines = [
@@ -216,19 +215,8 @@ const App = () => {
       }
     }
 
-    const setGameType = e => {
-      switch(e.target.value){
-        case 'one-player':
-          setOnePlayer(true);
-          setTwoPlayer(false);
-          break;
-        case 'two-player':
-          setTwoPlayer(true);
-          setOnePlayer(false);
-          break;
-        default:
-          console.log('Wrong Value');
-      }
+    const handleGameType = e => {
+      setGameType(e.target.value);
       setMoves(0);
       setPositions([]);
       setPlayerOneScore(0);
@@ -238,33 +226,59 @@ const App = () => {
     }
 
     useEffect(() => {
-      if(turn === 'Computers'){
-        setTimeout(suggestedComputerMove, 500);
-      }
+      if(turn === 'Computers') setTimeout(suggestedComputerMove, 500);
     }, [turn])
 
     return (
         <div className="App-body">
           <h1>Tic Tac Toe</h1>
           <div id="menu">
-            <button className="menu-button game-type" value="one-player"
-            onClick={setGameType}>1 Player</button>
-            <button className="menu-button game-type" value="two-player" 
-            onClick={setGameType}>2 Player</button>
+            <button 
+              className="menu-button game-type" 
+              value={1}
+              onClick={handleGameType}>
+                  1 Player
+            </button>
+            <button 
+              className="menu-button game-type" 
+              value={2}
+              onClick={handleGameType}>
+                  2 Player
+            </button>
           </div>
-          <div><button className="menu-button" id='reset' onClick={reset}>
-            Reset</button></div>
+          <div>
+              <button 
+                  className="menu-button" 
+                  id='reset' 
+                  onClick={reset}>
+                      Reset
+              </button>
+          </div>
           
-          {onePlayer && <div id="one-player-container">
-            <div id="scores">{playerScore}:{computerScore}</div>
-            <h3>{turn} Turn</h3>
-            <Board value={positions} onClick={handleClick} turn={currentMove}/>
-          </div>}
+          {gameType === 1 && 
+            <div id="one-player-container">
+              <div id="scores">
+                {playerScore}:{computerScore}
+              </div>
+              <h3>
+                {turn} Turn
+              </h3>
+              <Board 
+                value={positions} 
+                onClick={handleClick} 
+                turn={currentMove}/>
+            </div>}
 
-          {twoPlayer && <div id="two-player-container">
-          <div id="scores">{playerOneScore}:{playerTwoScore}</div>
-            <h3>{currentMove}'s Turn</h3>
-            <Board value={positions} onClick={handleClick} turn={currentMove}/>
+          {gameType === 2 && 
+            <div id="two-player-container">
+              <div id="scores">
+                {playerOneScore}:{playerTwoScore}
+              </div>
+              <h3>{currentMove}'s Turn</h3>
+              <Board 
+                value={positions} 
+                onClick={handleClick} 
+                turn={currentMove}/>
           </div>}
         </div>
     );
